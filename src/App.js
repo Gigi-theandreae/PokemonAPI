@@ -4,24 +4,22 @@ import { useState, useEffect } from "react";
 
 function App() {
 	const [pokemons, setPokemons] = useState([]);
-	const [currentUrl, setCurrentUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=10&offset=10");
-  const [nextPageUrl, setNextPageUrl] = useState();
-
+	const [currentUrl, setCurrentUrl] = useState(
+		"https://pokeapi.co/api/v2/pokemon?limit=10&offset=10"
+	);
 
 	useEffect(() => {
-		axios
-			.get(currentUrl)
-			.then((res) => {
-        setNextPageUrl(res.data.next)
-				setPokemons(res.data.results.map((pokemon) => pokemon.name));
-       
-			});
-	}, [currentUrl]);
-  
-  const getMorePokemons = () => {
-    setCurrentUrl(nextPageUrl);
-    setPokemons(pokemons)
-  }
+		getMorePokemons();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const getMorePokemons = () => {
+		axios.get(currentUrl).then((res) => {
+			setCurrentUrl(res.data.next);
+			const newPokemon = res.data.results.map((pokemon) => pokemon.name);
+			setPokemons([...pokemons, ...newPokemon]);
+		});
+	};
 
 	return (
 		<div className="App">
